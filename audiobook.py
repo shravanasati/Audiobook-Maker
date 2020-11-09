@@ -1,13 +1,21 @@
-import PyPDF2, os, docx
+# pypdf2 for extracting text form pdf, docx for word documents, gtts for text to speech conversion and os for checking if the path is valid and starting the file
+from docx import Document
 from gtts import gTTS
+from playsound import playsound
+from PyPDF2 import PdfFileReader
+from os import path as ospath
+from os import startfile
+
 
 class AudioBook():
     """
     Converts the given PDF file, word file or text file into audio(mp3) format.
     """
-    task_executed = False
 
     def __init__(self, stream:str, audio_file_name:str) -> None:
+        """Constructor"""
+        # manipulating and checking inputs
+        
         self.stream = stream
         if self.stream.endswith(".pdf"):
             self.form = "pdf"
@@ -20,20 +28,26 @@ class AudioBook():
             quit()
 
         self.audiofile = audio_file_name
-        if self.audiofile.endswith(".mp3"):
-            pass
-        else:
-            self.audiofile = self.audiofile + ".mp3"
+        if not self.audiofile.endswith(".mp3"):
+            self.audiofile += ".mp3"
 
-    def isValid(self, path:str):
+
+    def isValid(self):
         """
         Checks whether the given path is valid or not.
         """
-        if os.path.exists(path):
-            pass
-        else:
+        if not ospath.exists(self.stream):
             print("The given path is invalid.")
             quit()
+
+    def listen(self):
+        """
+        Opens the audiobook when ready.
+        """
+        start = input("Do you want to listen to the audiobook now?(Y/N) ")
+        if start.lower() == "y":
+            startfile(self.audiofile)
+
 
     def text_to_speech_PDF(self):
         """
@@ -41,23 +55,26 @@ class AudioBook():
         """
         try:
             print("Reading the book...")
-            book = PyPDF2.PdfFileReader(self.stream)
+            # making a book object and extracting text from the pdf
+            book = PdfFileReader(self.stream)
             text = ""
-            pages = book.getNumPages()
-            for i in range(pages):
+            for i in range(book.getNumPages()):
                 page_text = book.getPage(i).extractText()
                 text += page_text
 
-            print("Converting to audio... This may take a few minutes depending on your internet speed and size of the book...")
+            print("Converting to audio... This may take a while depending on your internet speed and size of the book...")
+            # converting the text to audio and saving the audio file
             speech = gTTS(text, lang='en')
             speech.save(self.audiofile)
 
         except Exception as e:
+            playsound(r"C:\Users\Lenovo\Documents\Python Codes\Awkward Cricket.mp3")
             print(e)
 
         else:
+            playsound(r"C:\Users\Lenovo\Documents\Python Codes\anime wow.mp3")
             print("Your audiobook is ready!")
-            AudioBook.task_executed = True
+            self.listen()
 
     def text_to_speech_TXT(self):
         """
@@ -68,16 +85,18 @@ class AudioBook():
             with open(self.stream) as f:
                 fc = f.read()
 
-            print("Converting to audio... This may take a few minutes depending on your internet speed and size of the book...")    
+            print("Converting to audio... This may take a while depending on your internet speed and size of the book...")    
             speech = gTTS(fc, lang='en')
             speech.save(self.audiofile)
         
         except Exception as e:
+            playsound(r"C:\Users\Lenovo\Documents\Python Codes\Awkward Cricket.mp3")
             print(e)
 
         else:
+            playsound(r"C:\Users\Lenovo\Documents\Python Codes\anime wow.mp3")
             print("Your audiobook is ready!")
-            AudioBook.task_executed = True
+            self.listen()
 
     def text_to_speech_DOCX(self):
         """
@@ -85,36 +104,30 @@ class AudioBook():
         """
         try:
             print("Reading the book...")
-            doc = docx.Document(self.stream)
+            # making a doc object and extracting text from the docx file
+            doc = Document(self.stream)
             text = ""
             for para in doc.paragraphs:
                 text += para.text + "\n"
 
-            print("Converting to audio... This may take a few minutes depending on your internet speed and size of the book...")
+            print("Converting to audio... This may take a while depending on your internet speed and size of the book...")
             speech = gTTS(text, lang='en')
             speech.save(self.audiofile)
-        
+            
         except Exception as e:
+            playsound(r"C:\Users\Lenovo\Documents\Python Codes\Awkward Cricket.mp3")
             print(e)
 
         else:
-            print("Your audiobook is ready!")
-            AudioBook.task_executed = True
+            playsound(r"C:\Users\Lenovo\Documents\Python Codes\anime wow.mp3")
+            self.listen()
 
-    def listen(self):
-        """
-        Opens the audiobook when ready!
-        """
-        if AudioBook.task_executed:
-            os.startfile(self.audiofile)
-        else:
-            quit()
 
-    def main(self):
+    def create_audiobook(self):
         """
         Calls the isValid and text_to_speech functions in order to create the audiobook.
         """
-        self.isValid(self.stream)
+        self.isValid()
 
         if self.form == "pdf":
             self.text_to_speech_PDF()
@@ -123,14 +136,10 @@ class AudioBook():
         elif self.form == "docx":
             self.text_to_speech_DOCX()
 
-        start = input("Wanna listen the audiobook now?(Y/N) ")
-        if start.lower() == "y":
-            self.listen()
-
 
 if __name__ == "__main__":
     print("Welcome to the Python Audio Book Maker!")
-    source = input("Enter the full path of the text or PDF file you want to turn into audiobook: ")
+    source = input("Enter the full path of the PDF/text/docx file you want to turn into audiobook: ")
     destination = input("Enter the name of the audiobook to save: ")
-    audiobook = AudioBook(source, destination)
-    audiobook.main()
+    ab = AudioBook(source, destination)
+    ab.create_audiobook()
