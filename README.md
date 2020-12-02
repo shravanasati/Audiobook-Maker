@@ -1,5 +1,5 @@
 # Audiobook-Maker
-An **audiobook maker** created with python which can produce audiobooks in mp3 format from PDF, text or Word files.
+An **audiobook maker** created in python which can produce audiobooks in mp3 format from PDF, text or Word files without any internet connection.
 
 *External modules required:*
 - PyPDF2 --> ```pip install PyPDF2```
