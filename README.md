@@ -4,7 +4,7 @@ An **audiobook maker** created with python which can produce audiobooks in mp3 f
 *External modules required:*
 - PyPDF2 --> ```pip install PyPDF2```
 - python-docx --> ```pip install python-docx```
-- gtts --> ```pip install gtts```
+- pyttsx3 --> ```pip install pyttsx3```
 
 Make sure you type the following commands as shown above, they are case-sensitive.
 The mp3 file generated will be saved in the current working directory.
